@@ -45,7 +45,7 @@ const poolL1 = [
     "Panther",
     "Mercury",
     "Atlas"
-]
+];
 
 // Function to generate a random mission name
 function generateMissions() {
@@ -114,7 +114,8 @@ function rollPools(amount, poolClass) {
                     else { poolType = "H";}
                     break;
         }
-        pools.push(`${poolType}${poolNumber}`);
+        poolPos = rollDice(6);
+        pools.push(`${poolType}${poolNumber} (Pos: ${poolPos})`);
     }
 
     return pools;
