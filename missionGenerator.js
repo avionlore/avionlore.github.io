@@ -38,6 +38,15 @@ const missionClasses = [
     "MH"
 ];
 
+const poolL1 = [
+    "Wasp",
+    "Jenner",
+    "Hatchetman",
+    "Panther",
+    "Mercury",
+    "Atlas"
+]
+
 // Function to generate a random mission name
 function generateMissions() {
     const numMissions = document.getElementById("numMissions").value;
@@ -52,16 +61,20 @@ function generateMissions() {
     for (let i = 0; i < numMissions; i++) {
         // Get the mission name at the random index
         const missionName = missionNames[Math.floor(Math.random() * missionNames.length)];
-        const missionParameter = missionParameters[Math.floor(Math.random() * missionParameters.length)];
+        let missionParameter = missionParameters[Math.floor(Math.random() * missionParameters.length)];
         const missionClass = missionClasses[Math.floor(Math.random() * missionClasses.length)];
         // Create a new paragraph element for each mission
         const missionElement = document.createElement("p");
         const missionTitle = document.createElement("p");
         missionTitle.textContent = `Mission ${i + 1}: ${missionName}`;
         const missionElementParameter = document.createElement("p");
+        if(rollDice(3) > 1) { missionParameter = "";} 
         missionElementParameter.textContent = `Parameters: ${missionParameter}`;
         const missionElementClass = document.createElement("p");
         missionElementClass.textContent = `Klasse: ${missionClass}`;
+        const missionElementBlips = document.createElement("p");
+        blipsFromPools = rollPools(rollDice(6), missionClass);
+        missionElementBlips.textContent = `Blips: ${blipsFromPools}`;
 
         diceThrowPlayerPos = rollDice(6);
         const missionElementPlayerStart = document.createElement("p");
@@ -72,8 +85,33 @@ function generateMissions() {
         missionsContainer.appendChild(missionElementParameter);
         missionsContainer.appendChild(missionElementClass);
         missionsContainer.appendChild(missionElementPlayerStart);
+        missionsContainer.appendChild(missionElementBlips);
     }
 }
 function rollDice(sides) {
     return Math.floor(Math.random() * sides) + 1;
+}
+
+function rollPools(amount, poolClass) {
+    let pools = [];
+    for (let i = 1; i <= amount; i++) {
+        poolNumber = rollDice(3);
+        let poolType = "";
+        switch (poolClass) {
+            case "L":
+                poolType = "L";
+                break;
+                case "LM":
+                    if(rollDice(2) == 1) { poolType = "L"; }
+                    else { poolType = "M";}
+                    break;            
+                case "MH":
+                    if(rollDice(2) == 1) { poolType = "M"; }
+                    else { poolType = "H";}
+                    break;
+        }
+        pools.push(`${poolType}${poolNumber}`);
+    }
+
+    return pools;
 }
