@@ -27,8 +27,10 @@
 </head>
 <body>
     <h1>Random Mission Generator</h1>
-    <button onclick="generateMission()">Generate</button>
-    <p id="missionResult"></p>
+    <label for="numMissions">Select number of missions (1-10):</label>
+    <input type="number" id="numMissions" min="1" max="10" value="1">
+    <button onclick="generateMissions()">Generate</button>
+    <div id="missionsContainer"></div>
 
     <!-- Link to external JavaScript file -->
     <script src="missionGenerator.js"></script>
