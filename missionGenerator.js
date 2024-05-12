@@ -35,7 +35,9 @@ const missionParameters = [
 const missionClasses = [
     "L",
     "LM",
-    "MH"
+    "MH",
+    "MA",
+    "LMHA"
 ];
 
 const poolL1 = [
@@ -68,17 +70,20 @@ function generateMissions() {
         const missionTitle = document.createElement("p");
         missionTitle.textContent = `Mission ${i + 1}: ${missionName}`;
         const missionElementParameter = document.createElement("p");
-        if(rollDice(3) > 1) { missionParameter = "";} 
+        if(rollDice(3) > 1) { missionParameter = "Nothing special";} 
         missionElementParameter.textContent = `Parameters: ${missionParameter}`;
+
         const missionElementClass = document.createElement("p");
         missionElementClass.textContent = `Klasse: ${missionClass}`;
+
         const missionElementBlips = document.createElement("p");
         blipsFromPools = rollPools(rollDice(6), missionClass);
         missionElementBlips.textContent = `Blips: ${blipsFromPools}`;
 
-        diceThrowPlayerPos = rollDice(6);
+        diceThrowPlayerWhichQuadrant = rollDice(6);
+        diceThrowPlayerWhichPosInQuadrant = rollDice(6);
         const missionElementPlayerStart = document.createElement("p");
-        missionElementPlayerStart.textContent = `Player Start: ${diceThrowPlayerPos}`;
+        missionElementPlayerStart.textContent = `Player Start (Quadrant,Pos in Quadrant): ${diceThrowPlayerWhichQuadrant},${diceThrowPlayerWhichPosInQuadrant}`;
         // Append the mission element to the missions container
         const missionContainer = document.createElement("p");
         missionContainer.classList.add("mission");
@@ -105,15 +110,36 @@ function rollPools(amount, poolClass) {
             case "L":
                 poolType = "L";
                 break;
-                case "LM":
-                    if(rollDice(2) == 1) { poolType = "L"; }
+            case "LM":
+                if(rollDice(2) == 1) { poolType = "L"; }
+                else { poolType = "M";}
+                break;            
+            case "MH":
+                if(rollDice(2) == 1) { poolType = "M"; }
+                else { poolType = "H";}
+                break;                
+            case "MA":
+                    if(rollDice(2) == 1) { poolType = "A"; }
                     else { poolType = "M";}
-                    break;            
-                case "MH":
-                    if(rollDice(2) == 1) { poolType = "M"; }
-                    else { poolType = "H";}
                     break;
-        }
+            case "LMHA":
+                diceRoll = rollDice(4)
+                switch (diceRoll) {
+                    case 1:
+                        poolType="L";
+                        break;
+                    case 2:
+                        poolType="M";
+                        break;
+                    case 3:
+                        poolType="H";
+                        break;
+                    case 4:
+                        poolType="A";
+                        break;
+                }
+
+                }
         poolPos = rollDice(6);
         pools.push(`${poolType}${poolNumber} (Pos: ${poolPos})`);
     }
