@@ -80,12 +80,16 @@ function generateMissions() {
         const missionElementPlayerStart = document.createElement("p");
         missionElementPlayerStart.textContent = `Player Start: ${diceThrowPlayerPos}`;
         // Append the mission element to the missions container
-        missionsContainer.appendChild(missionElement);
-        missionsContainer.appendChild(missionTitle);
-        missionsContainer.appendChild(missionElementParameter);
-        missionsContainer.appendChild(missionElementClass);
-        missionsContainer.appendChild(missionElementPlayerStart);
-        missionsContainer.appendChild(missionElementBlips);
+        const missionContainer = document.createElement("p");
+        missionContainer.classList.add("mission");
+        missionContainer.appendChild(missionElement);
+        missionContainer.appendChild(missionTitle);
+        missionContainer.appendChild(missionElementParameter);
+        missionContainer.appendChild(missionElementClass);
+        missionContainer.appendChild(missionElementPlayerStart);
+        missionContainer.appendChild(missionElementBlips);
+
+        missionsContainer.appendChild(missionContainer);
     }
 }
 function rollDice(sides) {
