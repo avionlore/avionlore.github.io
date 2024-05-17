@@ -51,13 +51,14 @@ const poolL1 = [
 
 // Function to generate a random mission name
 function generateMissions() {
-    const numMissions = document.getElementById("numMissions").value;
+    const numMissions = rollDice(5);
     const missionsContainer = document.getElementById("missionsContainer");
     missionsContainer.innerHTML = ""; // Clear previous missions
     
-    if (numMissions < 1 || numMissions > 10) {
-        alert("Please enter a number between 1 and 10.");
-        return;
+    const selectElement = document.getElementById('planets');
+    const selectedPlanet = selectElement.value;
+    if (selectedPlanet == "") {
+        return
     }
 
     for (let i = 0; i < numMissions; i++) {
