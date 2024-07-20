@@ -91,8 +91,21 @@ function generateMissions() {
         const missionElementBlips = document.createElement("p");
         missionElementBlips.classList.add("hideme");
         blipsFromPools = rollPools(rollDice(6), missionClass);
-        displayTextFromPools = blipsFromPools.map(obj => obj.display).join(", ");
-        missionElementBlips.textContent = `Blips: ${displayTextFromPools}`;
+        displayTextFromPools = blipsFromPools.map(obj => obj.displayPosition).join(", ");
+        blipsFromPools.forEach(pool => {
+            const subElement = document.createElement("p");
+            subElement.textContent = `${pool.displayPosition}`;
+            missionElementBlips.appendChild(subElement);
+        });
+
+        const missionElementBlipsMechSetup = document.createElement("p");
+        missionElementBlipsMechSetup.classList.add("hideme");
+        blipsFromPools.forEach(pool => {
+            const subElement = document.createElement("p");
+            subElement.textContent = `${pool.displayPosition}: ${pool.mechs}`;
+            missionElementBlipsMechSetup.appendChild(subElement);
+        });
+
 
         diceThrowPlayerWhichQuadrant = rollDice(6);
         diceThrowPlayerWhichPosInQuadrant = rollDice(6);
@@ -107,6 +120,7 @@ function generateMissions() {
         missionContainer.appendChild(missionElementClass);
         missionContainer.appendChild(missionElementPlayerStart);
         missionContainer.appendChild(missionElementBlips);
+        missionContainer.appendChild(missionElementBlipsMechSetup);
 
         missionsContainer.appendChild(missionContainer);
     }
@@ -114,6 +128,27 @@ function generateMissions() {
 
 function rollDice(sides) {
     return Math.floor(Math.random() * sides) + 1;
+}
+
+function howManyMechsCanSpawnFromBlip()
+{
+    diceRoll = rollDice(6);
+    if(diceRoll == 1)
+    {
+        return 0;
+    }
+    else if(diceRoll < 4)
+    {
+        return 1;
+    }
+    else if(diceRoll < 6)
+    {
+        return 2;
+    }
+    else
+    {
+        return 3
+    }
 }
 
 function rollPools(amount, poolClass) {
@@ -125,7 +160,9 @@ function rollPools(amount, poolClass) {
             poolType: "",
             poolPos: 0,
             poolQuadrant: 0,
-            poolClass: poolClass
+            poolClass: poolClass,
+            mechCount: howManyMechsCanSpawnFromBlip(),
+            mechs: ""
         };
         switch (pool.poolClass) {
             case "L":
@@ -168,9 +205,15 @@ function rollPools(amount, poolClass) {
 
         pool.poolPos = rollDice(6);
         pool.poolQuadrant = rollDice(4);
+        
+        const mechs = [];
+        for(i=0;i<=pool.mechCount;i++)
+        {
+            mechs.push(`${rollDice(6)},${rollDice(6)}`)
+        }
 
-        pool.display = `${pool.poolType} (Quadrant: ${pool.poolQuadrant} , Pos: ${pool.poolPos})`
-
+        pool.displayPosition = `${pool.poolType} (Quadrant: ${pool.poolQuadrant} , Pos: ${pool.poolPos})`
+        pool.mechs = mechs.join(" -- ");
         pools.push(pool);
     }
 
