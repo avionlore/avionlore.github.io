@@ -28,7 +28,8 @@ const missionParameters = [
     "Hohe Schwerkraft (alle Mechs Bewegung -1)",
     "Sehr hohe Schwerkraft (alle Mechs Bewegung -2)",
     "Hohe Piratenaktivität, jede Runde könnte ein Pirat erscheinen (Rundenstart, 1W6, 6 Pirat erscheint)",
-    "Sandsturm (alle Mechs Trefferwurf +1)"
+    "Sandsturm (alle Mechs Trefferwurf +1)",
+    "Jeder Blip hat jede Runde eine 1W6 (6 Erfolg) Chance, aktiviert zu werden."
 ];
 
 // Array Mission Classes
@@ -49,6 +50,16 @@ const poolL1 = [
     "Atlas"
 ];
 
+const maxBlipsPerClass = 3;
+
+function checkIfPlanetWasChosen(selectedPlanet)
+{
+    if (selectedPlanet == "") {
+        return false;
+    }
+    return true;
+}
+
 // Function to generate a random mission name
 function generateMissions() {
     const numMissions = rollDice(5);
@@ -57,7 +68,7 @@ function generateMissions() {
     
     const selectElement = document.getElementById('planets');
     const selectedPlanet = selectElement.value;
-    if (selectedPlanet == "") {
+    if (!checkIfPlanetWasChosen(selectedPlanet)) {
         return
     }
 
@@ -78,8 +89,10 @@ function generateMissions() {
         missionElementClass.textContent = `Klasse: ${missionClass}`;
 
         const missionElementBlips = document.createElement("p");
+        missionElementBlips.classList.add("hideme");
         blipsFromPools = rollPools(rollDice(6), missionClass);
-        missionElementBlips.textContent = `Blips: ${blipsFromPools}`;
+        displayTextFromPools = blipsFromPools.map(obj => obj.display).join(", ");
+        missionElementBlips.textContent = `Blips: ${displayTextFromPools}`;
 
         diceThrowPlayerWhichQuadrant = rollDice(6);
         diceThrowPlayerWhichPosInQuadrant = rollDice(6);
@@ -98,52 +111,78 @@ function generateMissions() {
         missionsContainer.appendChild(missionContainer);
     }
 }
+
 function rollDice(sides) {
     return Math.floor(Math.random() * sides) + 1;
 }
 
 function rollPools(amount, poolClass) {
-    let pools = [];
+    let pools = []
+
     for (let i = 1; i <= amount; i++) {
-        poolNumber = rollDice(3);
-        let poolType = "";
-        switch (poolClass) {
+        const pool = {
+            display: "",
+            poolType: "",
+            poolPos: 0,
+            poolQuadrant: 0,
+            poolClass: poolClass
+        };
+        switch (pool.poolClass) {
             case "L":
-                poolType = "L";
+                pool.poolType = "L";
                 break;
             case "LM":
-                if(rollDice(2) == 1) { poolType = "L"; }
-                else { poolType = "M";}
+                if(rollDice(2) == 1) { pool.poolType = "L"; }
+                else { pool.poolType = "M";}
                 break;            
             case "MH":
-                if(rollDice(2) == 1) { poolType = "M"; }
-                else { poolType = "H";}
+                if(rollDice(2) == 1) { pool.poolType = "M"; }
+                else { pool.poolType = "H";}
                 break;                
             case "MA":
-                    if(rollDice(2) == 1) { poolType = "A"; }
-                    else { poolType = "M";}
+                    if(rollDice(2) == 1) { pool.poolType = "A"; }
+                    else { pool.poolType = "M";}
                     break;
             case "LMHA":
                 diceRoll = rollDice(4)
                 switch (diceRoll) {
                     case 1:
-                        poolType="L";
+                        pool.poolType="L";
                         break;
                     case 2:
-                        poolType="M";
+                        pool.poolType="M";
                         break;
                     case 3:
-                        poolType="H";
+                        pool.poolType="H";
                         break;
                     case 4:
-                        poolType="A";
+                        pool.poolType="A";
                         break;
                 }
 
-                }
-        poolPos = rollDice(6);
-        pools.push(`${poolType}${poolNumber} (Pos: ${poolPos})`);
+        }
+        if(checkIfPoolIsAlreadyAtMax(pools, pool.poolType))
+        {
+            continue;
+        }
+
+        pool.poolPos = rollDice(6);
+        pool.poolQuadrant = rollDice(4);
+
+        pool.display = `${pool.poolType} (Quadrant: ${pool.poolQuadrant} , Pos: ${pool.poolPos})`
+
+        pools.push(pool);
     }
 
     return pools;
+}
+
+function checkIfPoolIsAlreadyAtMax(pools, poolType)
+{
+    const count = pools.filter(pool => pool.poolType === poolType).length;
+    if(count >= maxBlipsPerClass)
+    {
+        return true
+    }
+    return false;
 }
