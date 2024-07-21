@@ -52,26 +52,12 @@ const poolL1 = [
 
 const maxBlipsPerClass = 3;
 
-function checkIfPlanetWasChosen(selectedPlanet)
-{
-    if (selectedPlanet == "") {
-        return false;
-    }
-    return true;
-}
-
 // Function to generate a random mission name
 function generateMissions() {
     const numMissions = rollDice(5);
     const missionsContainer = document.getElementById("missionsContainer");
     missionsContainer.innerHTML = ""; // Clear previous missions
     
-    const selectElement = document.getElementById('planets');
-    const selectedPlanet = selectElement.value;
-    if (!checkIfPlanetWasChosen(selectedPlanet)) {
-        return
-    }
-
     for (let i = 0; i < numMissions; i++) {
         // Get the mission name at the random index
         const missionName = missionNames[Math.floor(Math.random() * missionNames.length)];
@@ -207,7 +193,7 @@ function rollPools(amount, poolClass) {
         pool.poolQuadrant = rollDice(4);
         
         const mechs = [];
-        for(i=0;i<=pool.mechCount;i++)
+        for(i=0;i<pool.mechCount;i++)
         {
             mechs.push(`${rollDice(6)},${rollDice(6)}`)
         }

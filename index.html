@@ -44,22 +44,7 @@
 <body>
     <h1>Random Mission Generator v1.5</h1>
     <h1>Select a Planet</h1>
-    <form id="planetForm">
-        <label for="planets">Choose a planet:</label>
-        <select class="planets" name="planets" id="planets" onchange="generateMissions()">
-            <option value="">--Select a planet--</option>
-            <option value="Arc-Royal">Arc-Royal</option>
-            <option value="Tharkad">Tharkad</option>
-            <option value="New Avalon">New Avalon</option>
-            <option value="Tukayyid">Tukayyid</option>
-            <option value="Luthien">Luthien</option>
-            <option value="Sarna">Sarna</option>
-            <option value="Hesperus II">Hesperus II</option>
-            <option value="Outreach">Outreach</option>
-            <option value="Terra">Terra</option>
-            <option value="Rasalhague">Rasalhague</option>
-        </select>
-    </form>
+    <button onclick="generateMissions()">Generate Missions</button>
     <div id="missionsContainer"></div>
 
     <!-- Link to external JavaScript file -->
