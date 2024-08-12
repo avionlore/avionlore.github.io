@@ -41,6 +41,7 @@ const missionClasses = [
     "LMHA"
 ];
 
+
 const poolL1 = [
     "Wasp",
     "Jenner",
@@ -49,6 +50,139 @@ const poolL1 = [
     "Mercury",
     "Atlas"
 ];
+
+const poolL2 = [
+    "Urban",
+    "Raven",
+    "Wasp",
+    "Mercury",
+    "Jenner",
+    "Hatchetman"
+];
+
+const poolL3 = [
+    "Wasp",
+    "Sentinel",
+    "Mercury",
+    "Urban",
+    "Raven",
+    "Exterminator"
+];
+
+const poolM1 = [
+    "Hunchback",
+    "Enforcer",
+    "Centurion",
+    "ShadowHawk",
+    "Blackjack",
+    "PhoenixHawk"
+];
+
+const poolM2 = [
+    "Urban",
+    "PhoenixHawk",
+    "Wolverine",
+    "ShadowHawk",
+    "Griffin",
+    "Catapult"
+];
+
+const poolM3 = [
+    "Griffin",
+    "Hunchback",
+    "Wolverine",
+    "Centurion",
+    "Catapult",
+    "Warhammer"
+];
+
+const poolH1 = [
+    "Grashopper",
+    "Catapult",
+    "Warhammer",
+    "Thunderbolt",
+    "Orion",
+    "Banshee"
+];
+
+const poolH2 = [
+    "Crusader",
+    "Catapult",
+    "Grashopper",
+    "Orion",
+    "BlackKnight",
+    "Thunderbolt"
+];
+
+const poolH3 = [
+    "Exterminator",
+    "Crusader",
+    "Warhammer",
+    "Thunderbolt",
+    "Orion",
+    "KingCrab"
+];
+
+const poolA1 = [
+    "Marauder2",
+    "Highlander",
+    "Grashopper",
+    "Banshee",
+    "Atlas",
+    "KingCrab"
+];
+
+const poolA2 = [
+    "Catapult",
+    "Banshee",
+    "Highlander",
+    "Atlas",
+    "KingCrab",
+    "Marauder2"
+];
+
+const poolA3 = [
+    "KingCrab",
+    "Atlas",
+    "Orion",
+    "Highlander",
+    "Marauder2",
+    "Banshee"
+];
+
+
+let poolsL = {
+    1: poolL1,
+    2: poolL2,
+    3: poolL3
+}
+
+let poolsM = {
+    1: poolM1,
+    2: poolM2,
+    3: poolM3
+}
+
+
+let poolsH = {
+    1: poolH1,
+    2: poolH2,
+    3: poolH3
+}
+
+let poolsA = {
+    1: poolA1,
+    2: poolA2,
+    3: poolA3
+}
+
+
+let mechClassMapping = {
+    "L": poolsL,
+    "M": poolsM,
+    "H": poolsH,
+    "A": poolsA
+};
 
 const maxBlipsPerClass = 3;
 
@@ -188,14 +322,18 @@ function rollPools(amount, poolClass) {
         {
             continue;
         }
+        let poolsWithMechs = mechClassMapping[pool.poolType];
 
         pool.poolPos = rollDice(6);
         pool.poolQuadrant = rollDice(4);
-        
+
         const mechs = [];
         for(i=0;i<pool.mechCount;i++)
         {
-            mechs.push(`${rollDice(6)},${rollDice(6)}`)
+            let diceMechPool = rollDice(3);
+            let diceMechFromPool = rollDice(6) - 1;
+            mechPool = poolsWithMechs[diceMechPool]
+            mechs.push(`${mechPool[diceMechFromPool]} (${diceMechPool}, ${diceMechFromPool})`)
         }
 
         pool.displayPosition = `${pool.poolType} (Quadrant: ${pool.poolQuadrant} , Pos: ${pool.poolPos})`
