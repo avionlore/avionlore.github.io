@@ -226,6 +226,25 @@ function generateMissions() {
             missionElementBlipsMechSetup.appendChild(subElement);
         });
 
+        const missionShowBlipsButton = document.createElement("button");
+        missionShowBlipsButton.innerText = "Show Blips";
+        missionShowBlipsButton.addEventListener('click', function(){
+            if (missionElementBlips.style.display == 'block') {
+                missionElementBlips.style.display = 'none';
+            } else {
+                missionElementBlips.style.display = 'block';
+            }
+        });
+
+        const missionShowBlipsMechSetupButton = document.createElement("button");
+        missionShowBlipsMechSetupButton.innerText = "Show Mechs";
+        missionShowBlipsMechSetupButton.addEventListener('click', function(){
+            if (missionElementBlipsMechSetup.style.display == 'block') {
+                missionElementBlipsMechSetup.style.display = 'none';
+            } else {
+                missionElementBlipsMechSetup.style.display = 'block';
+            }
+        });
 
         diceThrowPlayerWhichQuadrant = rollDice(6);
         diceThrowPlayerWhichPosInQuadrant = rollDice(6);
@@ -239,6 +258,8 @@ function generateMissions() {
         missionContainer.appendChild(missionElementParameter);
         missionContainer.appendChild(missionElementClass);
         missionContainer.appendChild(missionElementPlayerStart);
+        missionContainer.appendChild(missionShowBlipsButton);
+        missionContainer.appendChild(missionShowBlipsMechSetupButton);
         missionContainer.appendChild(missionElementBlips);
         missionContainer.appendChild(missionElementBlipsMechSetup);
 
