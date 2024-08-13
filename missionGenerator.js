@@ -32,35 +32,6 @@ const missionParameters = [
     "Jeder Blip hat jede Runde eine 1W6 (6 Erfolg) Chance, aktiviert zu werden."
 ];
 
-// Array Mission Classes
-let missionClasses = {
-    L: {
-        className: "L",
-        classFullName: "Light",
-        classDifficultyModifier: 1
-    },
-    LM: {
-        className: "LM",
-        classFullName: "Light+Medium",
-        classDifficultyModifier: 5
-    },
-    MH: {
-        className: "MH",
-        classFullName: "Medium+Heavy",
-        classDifficultyModifier: 10
-    },    
-    MA: {
-        className: "MA",
-        classFullName: "Medium+Assault",
-        classDifficultyModifier: 15
-    },
-    LMHA: {
-        className: "LMHA",
-        classFullName: "Light+Medium+Heavy+Assault",
-        classDifficultyModifier: 20
-    }
-};
-
 const poolL1 = [
     "Wasp",
     "Jenner",
@@ -195,12 +166,79 @@ let poolsA = {
     3: poolA3
 }
 
+let mechClasses = {
+    L: {
+        className: "Light",
+        classDifficultyModifier: 1,
+        containsPools: poolsL
+    },
+    M: {
+        className: "Medium",
+        classDifficultyModifier: 2,
+        containsPools: poolsM
+    },    
+    H: {
+        className: "Heavy",
+        classDifficultyModifier: 3,
+        containsPools: poolsH
+    },
+    A: {
+        className: "Assault",
+        classDifficultyModifier: 4,
+        containsPools: poolsA
+    },    
+};
 
-let mechClassMapping = {
-    "L": poolsL,
-    "M": poolsM,
-    "H": poolsH,
-    "A": poolsA
+// Array Mission Classes
+let missionClasses = {
+    L: {
+        className: "L",
+        classFullName: "Light",
+        classDifficultyModifier: 1,
+        containsClasses: [mechClasses.L]
+    },      
+    LA: {
+        className: "LA",
+        classFullName: "Light+Assault",
+        classDifficultyModifier: 16,
+        containsClasses: [mechClasses.L, mechClasses.A]
+    },    
+    M: {
+        className: "M",
+        classFullName: "Medium",
+        classDifficultyModifier: 5,
+        containsClasses: [mechClasses.M]
+    },
+    LM: {
+        className: "LM",
+        classFullName: "Light+Medium",
+        classDifficultyModifier: 6,
+        containsClasses: [mechClasses.L, mechClasses.M]
+    },
+    LMH: {
+        className: "LMH",
+        classFullName: "Light+Medium+Heavy",
+        classDifficultyModifier: 11,
+        containsClasses: [mechClasses.L, mechClasses.M, mechClasses.H]
+    },
+    MH: {
+        className: "MH",
+        classFullName: "Medium+Heavy",
+        classDifficultyModifier: 10,
+        containsClasses: [mechClasses.M, mechClasses.H]
+    },    
+    MA: {
+        className: "MA",
+        classFullName: "Medium+Assault",
+        classDifficultyModifier: 15,
+        containsClasses: [mechClasses.M, mechClasses.A]
+    },
+    LMHA: {
+        className: "LMHA",
+        classFullName: "Light+Medium+Heavy+Assault",
+        classDifficultyModifier: 20,
+        containsClasses: [mechClasses.L, mechClasses.M, mechClasses.H, mechClasses.A]
+    }
 };
 
 const maxBlipsPerClass = 3;
@@ -217,6 +255,7 @@ function generateMissions() {
         const missionName = missionNames[Math.floor(Math.random() * missionNames.length)];
         let missionParameter = missionParameters[Math.floor(Math.random() * missionParameters.length)];
         const missionClass = getRandomMissionClass();
+        missionDifficultyValue+= missionClass.classDifficultyModifier;
         // Create a new paragraph element for each mission
         const missionElement = document.createElement("p");
         const missionTitle = document.createElement("p");
@@ -233,7 +272,7 @@ function generateMissions() {
         missionElementParameter.textContent = `Parameters: ${missionParameter}`;
 
         const missionElementClass = document.createElement("p");
-        missionElementClass.textContent = `Class: ${missionClass.className}`;
+        missionElementClass.textContent = `Class: ${missionClass.classFullName}`;
 
         const missionElementBlips = document.createElement("p");
         missionElementBlips.classList.add("hideme");
@@ -305,17 +344,24 @@ function generateMissions() {
 
 function getRandomMissionClass()
 {
-        // Step 1: Get all the keys of missionClasses
     let keys = Object.keys(missionClasses);
 
-    // Step 2: Generate a random index based on the number of keys
     let randomIndex = Math.floor(Math.random() * keys.length);
 
-    // Step 3: Select a random key
     let randomKey = keys[randomIndex];
 
-    // Step 4: Get the corresponding item from missionClasses
     return missionClasses[randomKey];
+}
+
+function getRandomMechClassFromMissionClasses(possibleMissionClasses)
+{
+    let keys = Object.keys(possibleMissionClasses);
+
+    let randomIndex = Math.floor(Math.random() * keys.length);
+
+    let randomKey = keys[randomIndex];
+
+    return possibleMissionClasses[randomKey];
 }
 
 function rollDice(sides) {
@@ -357,69 +403,15 @@ function rollPools(amount, poolClass) {
             mechs: "No Mechs spotted",
             poolDifficulty: 0
         };
+        chosenClass = getRandomMechClassFromMissionClasses( poolClass.containsClasses);
+        pool.poolType = chosenClass;
+        pool.poolDifficulty+= chosenClass.classDifficultyModifier;
 
-        switch (pool.poolClass) {
-            case "L":
-                pool.poolType = "L";
-                pool.poolDifficulty+=1;
-                break;
-            case "LM":
-                if(rollDice(2) == 1) {
-                    pool.poolType = "L";
-                    pool.poolDifficulty+=1;
-                }
-                else { 
-                    pool.poolType = "M";
-                    pool.poolDifficulty+=2;
-                }
-                break;            
-            case "MH":
-                if(rollDice(2) == 1) { 
-                    pool.poolType = "M";
-                    pool.poolDifficulty+=2;
-                }
-                else { 
-                    pool.poolType = "H";
-                    pool.poolDifficulty+=3;
-                }
-                break;                
-            case "MA":
-                    if(rollDice(2) == 1) { 
-                        pool.poolType = "A";
-                        pool.poolDifficulty+=4;
-                    }
-                    else { 
-                        pool.poolType = "M";
-                        pool.poolDifficulty+=3;
-                    }
-                    break;
-            case "LMHA":
-                diceRoll = rollDice(4)
-                switch (diceRoll) {
-                    case 1:
-                        pool.poolType="L";
-                        pool.poolDifficulty+=1;
-                        break;
-                    case 2:
-                        pool.poolType="M";
-                        pool.poolDifficulty+=2;
-                        break;
-                    case 3:
-                        pool.poolType="H";
-                        pool.poolDifficulty+=3;
-                        break;
-                    case 4:
-                        pool.poolType="A";
-                        pool.poolDifficulty+=4;
-                        break;
-                }
-
-        }
         if(checkIfPoolIsAlreadyAtMax(pools, pool.poolType))
         {
             continue;
         }
-        let poolsWithMechs = mechClassMapping[pool.poolType];
+        let poolsWithMechs = pool.poolType.containsPools;
 
         pool.poolPos = rollDice(6);
         pool.poolQuadrant = rollDice(4);
@@ -434,7 +426,7 @@ function rollPools(amount, poolClass) {
             mechs.push(`${mechPool[diceMechFromPool]} (Pos: ${mechPos})`)
         }
 
-        pool.displayPosition = `${pool.poolType} (Quadrant: ${pool.poolQuadrant} , Pos: ${pool.poolPos})`
+        pool.displayPosition = `${pool.poolType.className} (Quadrant: ${pool.poolQuadrant} , Pos: ${pool.poolPos})`
         
         if(mechs.length>0) {pool.mechs = mechs.join(" -- ");}
         
