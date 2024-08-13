@@ -42,6 +42,9 @@
             border: 2px #ff0000 dotted;
             display: none;
         }
+        .hideme_noborder {
+            display: none;
+        }
         .planets {
             width: auto;
             height: 50px;
@@ -50,13 +53,17 @@
         .titlebox {
             border: 1px solid #ccc;
             background-color: rgba(128, 128, 128, 0.5);
+        }        
+        .blip {
+            border: 1px solid #ccc;
+            background-color: rgba(128, 128, 128, 0.5);
         }
         
     </style>
 </head>
 <body>
     <div class="titlebox">
-        <h1>Random Mission Generator v1.9</h1>
+        <h1>Random Mission Generator v1.10</h1>
     </div>
     <button onclick="generateMissions()">Generate Missions</button>
     <div id="missionsContainer"></div>

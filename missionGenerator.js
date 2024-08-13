@@ -250,24 +250,28 @@ function generateMissions() {
         missionElementBlipsMechSetup.classList.add("hideme");
         blipsFromPools.forEach(pool => {
             const subElement = document.createElement("p");
-            subElement.textContent = `${pool.displayPosition}: ${pool.mechs}`;
+            subElement.classList.add("blip");
+            subElement.textContent = `${pool.displayPosition}:`;
+            const mechDisplay = document.createElement("p");
+            mechDisplay.textContent = `${pool.mechs}`;
+            mechDisplay.classList.add("hideme_noborder");
+            const mechIntelButton = document.createElement("button");
+            mechIntelButton.innerText = "Intel";
+            mechIntelButton.addEventListener('click', function(){
+                if (mechDisplay.style.display == 'block') {
+                    mechDisplay.style.display = 'none';
+                } else {
+                    mechDisplay.style.display = 'block';
+                }
+            });            
+            subElement.appendChild(mechIntelButton);
+            subElement.appendChild(mechDisplay);
             missionElementBlipsMechSetup.appendChild(subElement);
         });
 
         const missionDifficulty = document.createElement("p");
         missionDifficulty.textContent = `Difficulty: ${missionDifficultyValue}`;
        
-
-        const missionShowBlipsButton = document.createElement("button");
-        missionShowBlipsButton.innerText = "Intel Blips";
-        missionShowBlipsButton.addEventListener('click', function(){
-            if (missionElementBlips.style.display == 'block') {
-                missionElementBlips.style.display = 'none';
-            } else {
-                missionElementBlips.style.display = 'block';
-            }
-        });
-
         const missionShowBlipsMechSetupButton = document.createElement("button");
         missionShowBlipsMechSetupButton.innerText = "Intel Mechs";
         missionShowBlipsMechSetupButton.addEventListener('click', function(){
@@ -291,7 +295,6 @@ function generateMissions() {
         missionContainer.appendChild(missionElementParameter);
         missionContainer.appendChild(missionElementClass);
         missionContainer.appendChild(missionElementPlayerStart);
-        missionContainer.appendChild(missionShowBlipsButton);
         missionContainer.appendChild(missionShowBlipsMechSetupButton);
         missionContainer.appendChild(missionElementBlips);
         missionContainer.appendChild(missionElementBlipsMechSetup);
@@ -351,7 +354,7 @@ function rollPools(amount, poolClass) {
             poolQuadrant: 0,
             poolClass: poolClass.className,
             mechCount: howManyMechsCanSpawnFromBlip(),
-            mechs: "",
+            mechs: "No Mechs spotted",
             poolDifficulty: 0
         };
 
@@ -426,12 +429,15 @@ function rollPools(amount, poolClass) {
         {
             let diceMechPool = rollDice(3);
             let diceMechFromPool = rollDice(6) - 1;
-            mechPool = poolsWithMechs[diceMechPool]
-            mechs.push(`${mechPool[diceMechFromPool]} (${diceMechPool}, ${diceMechFromPool})`)
+            mechPool = poolsWithMechs[diceMechPool];
+            mechPos = rollDice(6);
+            mechs.push(`${mechPool[diceMechFromPool]} (Pos: ${mechPos})`)
         }
 
         pool.displayPosition = `${pool.poolType} (Quadrant: ${pool.poolQuadrant} , Pos: ${pool.poolPos})`
-        pool.mechs = mechs.join(" -- ");
+        
+        if(mechs.length>0) {pool.mechs = mechs.join(" -- ");}
+        
         pool.poolDifficulty+= pool.mechCount;
         pools.push(pool);
     }
