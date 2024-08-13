@@ -259,7 +259,7 @@ function generateMissions() {
        
 
         const missionShowBlipsButton = document.createElement("button");
-        missionShowBlipsButton.innerText = "Show Blips";
+        missionShowBlipsButton.innerText = "Intel Blips";
         missionShowBlipsButton.addEventListener('click', function(){
             if (missionElementBlips.style.display == 'block') {
                 missionElementBlips.style.display = 'none';
@@ -269,7 +269,7 @@ function generateMissions() {
         });
 
         const missionShowBlipsMechSetupButton = document.createElement("button");
-        missionShowBlipsMechSetupButton.innerText = "Show Mechs";
+        missionShowBlipsMechSetupButton.innerText = "Intel Mechs";
         missionShowBlipsMechSetupButton.addEventListener('click', function(){
             if (missionElementBlipsMechSetup.style.display == 'block') {
                 missionElementBlipsMechSetup.style.display = 'none';
