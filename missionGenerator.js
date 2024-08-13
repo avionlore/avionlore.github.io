@@ -33,14 +33,33 @@ const missionParameters = [
 ];
 
 // Array Mission Classes
-const missionClasses = [
-    "L",
-    "LM",
-    "MH",
-    "MA",
-    "LMHA"
-];
-
+let missionClasses = {
+    L: {
+        className: "L",
+        classFullName: "Light",
+        classDifficultyModifier: 1
+    },
+    LM: {
+        className: "LM",
+        classFullName: "Light+Medium",
+        classDifficultyModifier: 5
+    },
+    MH: {
+        className: "MH",
+        classFullName: "Medium+Heavy",
+        classDifficultyModifier: 10
+    },    
+    MA: {
+        className: "MA",
+        classFullName: "Medium+Assault",
+        classDifficultyModifier: 15
+    },
+    LMHA: {
+        className: "LMHA",
+        classFullName: "Light+Medium+Heavy+Assault",
+        classDifficultyModifier: 20
+    }
+};
 
 const poolL1 = [
     "Wasp",
@@ -193,20 +212,28 @@ function generateMissions() {
     missionsContainer.innerHTML = ""; // Clear previous missions
     
     for (let i = 0; i < numMissions; i++) {
+        let missionDifficultyValue = 1;
         // Get the mission name at the random index
         const missionName = missionNames[Math.floor(Math.random() * missionNames.length)];
         let missionParameter = missionParameters[Math.floor(Math.random() * missionParameters.length)];
-        const missionClass = missionClasses[Math.floor(Math.random() * missionClasses.length)];
+        const missionClass = getRandomMissionClass();
         // Create a new paragraph element for each mission
         const missionElement = document.createElement("p");
         const missionTitle = document.createElement("p");
         missionTitle.textContent = `Mission ${i + 1}: ${missionName}`;
         const missionElementParameter = document.createElement("p");
-        if(rollDice(3) > 1) { missionParameter = "Nothing special";} 
+        if(rollDice(3) > 1) 
+        { 
+            missionParameter = "Nothing special";
+        }
+        else
+        {
+            missionDifficultyValue+=5;
+        }
         missionElementParameter.textContent = `Parameters: ${missionParameter}`;
 
         const missionElementClass = document.createElement("p");
-        missionElementClass.textContent = `Klasse: ${missionClass}`;
+        missionElementClass.textContent = `Class: ${missionClass.className}`;
 
         const missionElementBlips = document.createElement("p");
         missionElementBlips.classList.add("hideme");
@@ -216,6 +243,7 @@ function generateMissions() {
             const subElement = document.createElement("p");
             subElement.textContent = `${pool.displayPosition}`;
             missionElementBlips.appendChild(subElement);
+            missionDifficultyValue+=pool.poolDifficulty;
         });
 
         const missionElementBlipsMechSetup = document.createElement("p");
@@ -225,6 +253,10 @@ function generateMissions() {
             subElement.textContent = `${pool.displayPosition}: ${pool.mechs}`;
             missionElementBlipsMechSetup.appendChild(subElement);
         });
+
+        const missionDifficulty = document.createElement("p");
+        missionDifficulty.textContent = `Difficulty: ${missionDifficultyValue}`;
+       
 
         const missionShowBlipsButton = document.createElement("button");
         missionShowBlipsButton.innerText = "Show Blips";
@@ -255,6 +287,7 @@ function generateMissions() {
         missionContainer.classList.add("mission");
         missionContainer.appendChild(missionElement);
         missionContainer.appendChild(missionTitle);
+        missionContainer.appendChild(missionDifficulty);
         missionContainer.appendChild(missionElementParameter);
         missionContainer.appendChild(missionElementClass);
         missionContainer.appendChild(missionElementPlayerStart);
@@ -265,6 +298,21 @@ function generateMissions() {
 
         missionsContainer.appendChild(missionContainer);
     }
+}
+
+function getRandomMissionClass()
+{
+        // Step 1: Get all the keys of missionClasses
+    let keys = Object.keys(missionClasses);
+
+    // Step 2: Generate a random index based on the number of keys
+    let randomIndex = Math.floor(Math.random() * keys.length);
+
+    // Step 3: Select a random key
+    let randomKey = keys[randomIndex];
+
+    // Step 4: Get the corresponding item from missionClasses
+    return missionClasses[randomKey];
 }
 
 function rollDice(sides) {
@@ -301,40 +349,65 @@ function rollPools(amount, poolClass) {
             poolType: "",
             poolPos: 0,
             poolQuadrant: 0,
-            poolClass: poolClass,
+            poolClass: poolClass.className,
             mechCount: howManyMechsCanSpawnFromBlip(),
-            mechs: ""
+            mechs: "",
+            poolDifficulty: 0
         };
+
         switch (pool.poolClass) {
             case "L":
                 pool.poolType = "L";
+                pool.poolDifficulty+=1;
                 break;
             case "LM":
-                if(rollDice(2) == 1) { pool.poolType = "L"; }
-                else { pool.poolType = "M";}
+                if(rollDice(2) == 1) {
+                    pool.poolType = "L";
+                    pool.poolDifficulty+=1;
+                }
+                else { 
+                    pool.poolType = "M";
+                    pool.poolDifficulty+=2;
+                }
                 break;            
             case "MH":
-                if(rollDice(2) == 1) { pool.poolType = "M"; }
-                else { pool.poolType = "H";}
+                if(rollDice(2) == 1) { 
+                    pool.poolType = "M";
+                    pool.poolDifficulty+=2;
+                }
+                else { 
+                    pool.poolType = "H";
+                    pool.poolDifficulty+=3;
+                }
                 break;                
             case "MA":
-                    if(rollDice(2) == 1) { pool.poolType = "A"; }
-                    else { pool.poolType = "M";}
+                    if(rollDice(2) == 1) { 
+                        pool.poolType = "A";
+                        pool.poolDifficulty+=4;
+                    }
+                    else { 
+                        pool.poolType = "M";
+                        pool.poolDifficulty+=3;
+                    }
                     break;
             case "LMHA":
                 diceRoll = rollDice(4)
                 switch (diceRoll) {
                     case 1:
                         pool.poolType="L";
+                        pool.poolDifficulty+=1;
                         break;
                     case 2:
                         pool.poolType="M";
+                        pool.poolDifficulty+=2;
                         break;
                     case 3:
                         pool.poolType="H";
+                        pool.poolDifficulty+=3;
                         break;
                     case 4:
                         pool.poolType="A";
+                        pool.poolDifficulty+=4;
                         break;
                 }
 
@@ -359,6 +432,7 @@ function rollPools(amount, poolClass) {
 
         pool.displayPosition = `${pool.poolType} (Quadrant: ${pool.poolQuadrant} , Pos: ${pool.poolPos})`
         pool.mechs = mechs.join(" -- ");
+        pool.poolDifficulty+= pool.mechCount;
         pools.push(pool);
     }
 
