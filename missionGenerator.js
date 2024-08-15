@@ -243,51 +243,70 @@ let missionClasses = {
 
 const maxBlipsPerClass = 3;
 
+let loadedMissionObject = {};
+
+let missionObject = {
+    numMissions: 1,
+    missionDifficultyValue: 0,
+    missionName: "",
+    missionParameter: "",
+    missionClass: "",
+    blipsFromPools: "",
+    diceThrowPlayerWhichQuadrant: 0,
+    diceThrowPlayerWhichPosInQuadrant: 0,
+}
+
+function setMissionObject(key, value)
+{
+    if(!(key in missionObject)) { return; }
+    if(key in loadedMissionObject) { missionObject[key] = loadedMissionObject[key]; return;}
+    missionObject[key] = value;
+}
+
 // Function to generate a random mission name
 function generateMissions() {
-    const numMissions = rollDice(5);
+    setMissionObject("numMissions", rollDice(5));
     const missionsContainer = document.getElementById("missionsContainer");
     missionsContainer.innerHTML = ""; // Clear previous missions
     
-    for (let i = 0; i < numMissions; i++) {
-        let missionDifficultyValue = 1;
+    for (let i = 0; i < missionObject.numMissions; i++) {
+        setMissionObject("missionDifficultyValue", 1);
         // Get the mission name at the random index
-        const missionName = missionNames[Math.floor(Math.random() * missionNames.length)];
-        let missionParameter = missionParameters[Math.floor(Math.random() * missionParameters.length)];
-        const missionClass = getRandomMissionClass();
-        missionDifficultyValue+= missionClass.classDifficultyModifier;
+        setMissionObject("missionName", missionNames[Math.floor(Math.random() * missionNames.length)]);
+        setMissionObject("missionParameter", missionParameters[Math.floor(Math.random() * missionParameters.length)]);
+        setMissionObject("missionClass", getRandomMissionClass());
+        setMissionObject("missionDifficultyValue", missionObject.missionDifficultyValue+= missionObject.missionClass.classDifficultyModifier);
         // Create a new paragraph element for each mission
         const missionElement = document.createElement("p");
         const missionTitle = document.createElement("p");
-        missionTitle.textContent = `Mission ${i + 1}: ${missionName}`;
+        missionTitle.textContent = `Mission ${i + 1}: ${missionObject.missionName}`;
         const missionElementParameter = document.createElement("p");
         if(rollDice(3) > 1) 
         { 
-            missionParameter = "Nothing special";
+            setMissionObject("missionParameter", "Nothing special");
         }
         else
         {
-            missionDifficultyValue+=5;
+            setMissionObject("missionDifficultyValue", missionObject.missionDifficultyValue+=5);
         }
-        missionElementParameter.textContent = `Parameters: ${missionParameter}`;
+        missionElementParameter.textContent = `Parameters: ${missionObject.missionParameter}`;
 
         const missionElementClass = document.createElement("p");
-        missionElementClass.textContent = `Class: ${missionClass.classFullName}`;
+        missionElementClass.textContent = `Class: ${missionObject.missionClass.classFullName}`;
 
         const missionElementBlips = document.createElement("p");
         missionElementBlips.classList.add("hideme");
-        blipsFromPools = rollPools(rollDice(6), missionClass);
-        displayTextFromPools = blipsFromPools.map(obj => obj.displayPosition).join(", ");
-        blipsFromPools.forEach(pool => {
+        setMissionObject("blipsFromPools",rollPools(rollDice(6), missionObject.missionClass));
+        missionObject.blipsFromPools.forEach(pool => {
             const subElement = document.createElement("p");
             subElement.textContent = `${pool.displayPosition}`;
             missionElementBlips.appendChild(subElement);
-            missionDifficultyValue+=pool.poolDifficulty;
+            setMissionObject("missionDifficultyValue", missionObject.missionDifficultyValue+=pool.poolDifficulty);
         });
 
         const missionElementBlipsMechSetup = document.createElement("p");
         missionElementBlipsMechSetup.classList.add("hideme");
-        blipsFromPools.forEach(pool => {
+        missionObject.blipsFromPools.forEach(pool => {
             const subElement = document.createElement("p");
             subElement.classList.add("blip");
             subElement.textContent = `${pool.displayPosition}:`;
@@ -309,7 +328,7 @@ function generateMissions() {
         });
 
         const missionDifficulty = document.createElement("p");
-        missionDifficulty.textContent = `Difficulty: ${missionDifficultyValue}`;
+        missionDifficulty.textContent = `Difficulty: ${missionObject.missionDifficultyValue}`;
        
         const missionShowBlipsMechSetupButton = document.createElement("button");
         missionShowBlipsMechSetupButton.innerText = "Intel Mechs";
@@ -321,10 +340,10 @@ function generateMissions() {
             }
         });
 
-        diceThrowPlayerWhichQuadrant = rollDice(6);
-        diceThrowPlayerWhichPosInQuadrant = rollDice(6);
+        setMissionObject("diceThrowPlayerWhichQuadrant",rollDice(6));
+        setMissionObject("diceThrowPlayerWhichPosInQuadrant",rollDice(6));
         const missionElementPlayerStart = document.createElement("p");
-        missionElementPlayerStart.textContent = `Player Start (Quadrant,Pos in Quadrant): ${diceThrowPlayerWhichQuadrant},${diceThrowPlayerWhichPosInQuadrant}`;
+        missionElementPlayerStart.textContent = `Player Start (Quadrant,Pos in Quadrant): ${missionObject.diceThrowPlayerWhichQuadrant},${missionObject.diceThrowPlayerWhichPosInQuadrant}`;
         // Append the mission element to the missions container
         const missionContainer = document.createElement("p");
         missionContainer.classList.add("mission");
@@ -339,6 +358,22 @@ function generateMissions() {
         missionContainer.appendChild(missionElementBlipsMechSetup);
 
         missionsContainer.appendChild(missionContainer);
+
+        const saveloadbox = document.createElement("textarea");
+        let saveboxId = `saveloadbox_${i}`;
+        saveloadbox.id = saveboxId;
+
+        saveloadbox.innerText = JSON.stringify(missionObject);
+        missionsContainer.appendChild(saveloadbox);
+        
+        const loadHTMLFromBox = document.createElement("button");
+        loadHTMLFromBox.innerText = "Load";
+        loadHTMLFromBox.addEventListener('click', function(){
+            loadedMissionObject = JSON.parse(document.getElementById(saveboxId).value);
+            loadedMissionObject.numMissions = 1;
+            generateMissions();
+        });
+        missionsContainer.appendChild(loadHTMLFromBox);
     }
 }
 
