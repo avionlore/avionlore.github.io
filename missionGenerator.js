@@ -6,7 +6,7 @@ const missionNames = [
     "Desert #1",
     "Desert #2",
     "Desert #3",
-    "Rolling Hills #1 (Grassland/Hills)",
+    "Rolling Hills #2 (Grassland/Hills)",
     "Hill Tops #1 (Grassland/Hills)",
     "Barren Lands #1 (Desert/Hills)",
     "Barren Lands #2 (Desert/Hills)",
@@ -174,17 +174,17 @@ let mechClasses = {
     },
     M: {
         className: "Medium",
-        classDifficultyModifier: 2,
+        classDifficultyModifier: 5,
         containsPools: poolsM
     },    
     H: {
         className: "Heavy",
-        classDifficultyModifier: 3,
+        classDifficultyModifier: 10,
         containsPools: poolsH
     },
     A: {
         className: "Assault",
-        classDifficultyModifier: 4,
+        classDifficultyModifier: 15,
         containsPools: poolsA
     },    
 };
