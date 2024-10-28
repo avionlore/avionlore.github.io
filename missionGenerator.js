@@ -38,7 +38,7 @@ const poolL1 = [
     "Hatchetman",
     "Panther",
     "Mercury",
-    "Atlas"
+    "Urban"
 ];
 
 const poolL2 = [
@@ -55,8 +55,13 @@ const poolL3 = [
     "Sentinel",
     "Mercury",
     "Urban",
+    "Raven",    
+    "Wasp",
+    "Sentinel",
+    "Mercury",
+    "Urban",
     "Raven",
-    "Exterminator"
+    "CatapultSurprise"
 ];
 
 const poolM1 = [
@@ -82,8 +87,13 @@ const poolM3 = [
     "Hunchback",
     "Wolverine",
     "Centurion",
+    "Catapult",    
+    "Griffin",
+    "Hunchback",
+    "Wolverine",
+    "Centurion",
     "Catapult",
-    "Warhammer"
+    "WarhammerSurprise"
 ];
 
 const poolH1 = [
@@ -109,8 +119,13 @@ const poolH3 = [
     "Crusader",
     "Warhammer",
     "Thunderbolt",
+    "Orion",    
+    "Exterminator",
+    "Crusader",
+    "Warhammer",
+    "Thunderbolt",
     "Orion",
-    "KingCrab"
+    "KingCrabSurprise"
 ];
 
 const poolA1 = [
@@ -137,7 +152,7 @@ const poolA3 = [
     "Orion",
     "Highlander",
     "Marauder2",
-    "Banshee"
+    "WaspSurprise"
 ];
 
 
@@ -174,17 +189,17 @@ let mechClasses = {
     },
     M: {
         className: "Medium",
-        classDifficultyModifier: 5,
+        classDifficultyModifier: 3,
         containsPools: poolsM
     },    
     H: {
         className: "Heavy",
-        classDifficultyModifier: 10,
+        classDifficultyModifier: 6,
         containsPools: poolsH
     },
     A: {
         className: "Assault",
-        classDifficultyModifier: 15,
+        classDifficultyModifier: 9,
         containsPools: poolsA
     },    
 };
