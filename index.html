@@ -58,14 +58,28 @@
             border: 1px solid #ccc;
             background-color: rgba(128, 128, 128, 0.5);
         }
+
+        #mechClassesDropdown {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 20px;        
+        }
+        
         
     </style>
 </head>
 <body>
     <div class="titlebox">
-        <h1>Random Mission Generator v1.13</h1>
+        <h1>Random Mission Generator v1.14</h1>
     </div>
-    <button onclick="loadedMissionObject = {};generateMissions()">Generate Missions</button>
+    <label for="mechClassesDropdown">Possible Mech Classes:</label>
+    <select id="mechClassesDropdown"></select>
+    <button onclick="loadedMissionObject = {};generateMissions(document.getElementById('mechClassesDropdown').value)">Generate Missions</button>
     <div id="missionsContainer"></div>
 
     <!-- Link to external JavaScript file -->

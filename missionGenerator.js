@@ -271,6 +271,23 @@ let missionObject = {
     diceThrowPlayerWhichPosInQuadrant: 0,
 }
 
+
+// Reference to the dropdown element
+const dropdown = document.getElementById('mechClassesDropdown');
+
+// Populate the dropdown using the options object
+for (const [value, label] of Object.entries(missionClasses)) {
+    const option = document.createElement('option');
+    option.value = label.className; // Set the value of the option
+    option.textContent = label.classFullName; // Set the display text of the option
+    dropdown.appendChild(option); // Add the option to the dropdown
+}
+
+dropdown.addEventListener('change', () => {
+    generateMissions(dropdown.value);
+});
+
+
 function setMissionObject(key, value)
 {
     if(!(key in missionObject)) { return; }
@@ -279,7 +296,7 @@ function setMissionObject(key, value)
 }
 
 // Function to generate a random mission name
-function generateMissions() {
+function generateMissions(allowedMechClasses) {
     setMissionObject("numMissions", rollDice(5));
     const missionsContainer = document.getElementById("missionsContainer");
     missionsContainer.innerHTML = ""; // Clear previous missions
@@ -289,7 +306,7 @@ function generateMissions() {
         // Get the mission name at the random index
         setMissionObject("missionName", missionNames[Math.floor(Math.random() * missionNames.length)]);
         setMissionObject("missionParameter", missionParameters[Math.floor(Math.random() * missionParameters.length)]);
-        setMissionObject("missionClass", getRandomMissionClass());
+        setMissionObject("missionClass", getMissionClass(allowedMechClasses));
         setMissionObject("missionDifficultyValue", missionObject.missionDifficultyValue+= missionObject.missionClass.classDifficultyModifier);
         // Create a new paragraph element for each mission
         const missionElement = document.createElement("p");
@@ -392,7 +409,14 @@ function generateMissions() {
     }
 }
 
-function getRandomMissionClass()
+function getMissionClass(allowedMechClasses)
+{
+    for (const [value, mission] of Object.entries(missionClasses)) {
+        if(allowedMechClasses == mission.className) return mission
+    }
+}
+
+function getRandomMissionClass(allowedMechClasses)
 {
     let keys = Object.keys(missionClasses);
 
