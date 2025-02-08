@@ -269,6 +269,7 @@ let missionObject = {
     blipsFromPools: "",
     diceThrowPlayerWhichQuadrant: 0,
     diceThrowPlayerWhichPosInQuadrant: 0,
+    diceThrowPosAbsolute: 0,
 }
 
 
@@ -374,8 +375,11 @@ function generateMissions(allowedMechClasses) {
 
         setMissionObject("diceThrowPlayerWhichQuadrant",rollDice(6));
         setMissionObject("diceThrowPlayerWhichPosInQuadrant",rollDice(6));
+        setMissionObject("diceThrowPosAbsolute",rollDice(9));
+
+        
         const missionElementPlayerStart = document.createElement("p");
-        missionElementPlayerStart.textContent = `Player Start (Quadrant,Pos in Quadrant): ${missionObject.diceThrowPlayerWhichQuadrant},${missionObject.diceThrowPlayerWhichPosInQuadrant}`;
+        missionElementPlayerStart.textContent = `Player Start (Quadrant,Pos in Quadrant, Absolute): ${missionObject.diceThrowPlayerWhichQuadrant},${missionObject.diceThrowPlayerWhichPosInQuadrant},${missionObject.diceThrowPosAbsolute}`;
         // Append the mission element to the missions container
         const missionContainer = document.createElement("p");
         missionContainer.classList.add("mission");
@@ -472,6 +476,7 @@ function rollPools(amount, poolClass) {
             poolType: "",
             poolPos: 0,
             poolQuadrant: 0,
+            poolAbsolutePos: 0,
             poolClass: poolClass.className,
             mechCount: howManyMechsCanSpawnFromBlip(),
             mechs: "No Mechs spotted",
@@ -489,6 +494,7 @@ function rollPools(amount, poolClass) {
 
         pool.poolPos = rollDice(6);
         pool.poolQuadrant = rollDice(4);
+        pool.poolAbsolutePos = rollDice(9);
 
         const mechs = [];
         for(i=0;i<pool.mechCount;i++)
@@ -500,7 +506,7 @@ function rollPools(amount, poolClass) {
             mechs.push(`${mechPool[diceMechFromPool]} (Pos: ${mechPos})`)
         }
 
-        pool.displayPosition = `${pool.poolType.className} (Quadrant: ${pool.poolQuadrant} , Pos: ${pool.poolPos})`
+        pool.displayPosition = `${pool.poolType.className} (Quadrant: ${pool.poolQuadrant} , Pos: ${pool.poolPos}, Absolute: ${pool.poolAbsolutePos})`
         
         if(mechs.length>0) {pool.mechs = mechs.join(" -- ");}
         
