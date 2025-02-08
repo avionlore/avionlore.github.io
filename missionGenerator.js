@@ -282,6 +282,12 @@ let config = {
     maxMechsInMission: 10
 }
 
+let mapPositionArray = [
+    [3,6,9],
+    [2,5,8],
+    [1,4,7]
+]
+
 
 // Reference to the dropdown element
 const dropdown = document.getElementById('mechClassesDropdown');
@@ -390,6 +396,8 @@ function generateMissions(allowedMechClasses) {
         
         const missionElementPlayerStart = document.createElement("p");
         missionElementPlayerStart.textContent = `Player Start (Quadrant,Pos in Quadrant, Absolute): ${missionObject.diceThrowPlayerWhichQuadrant},${missionObject.diceThrowPlayerWhichPosInQuadrant},${missionObject.diceThrowPosAbsolute}`;
+        const missionElementPlayerStartGraph = createPosGraphTable(missionObject.diceThrowPosAbsolute);
+
         // Append the mission element to the missions container
         const missionContainer = document.createElement("p");
         missionContainer.classList.add("mission");
@@ -399,6 +407,7 @@ function generateMissions(allowedMechClasses) {
         missionContainer.appendChild(missionElementParameter);
         missionContainer.appendChild(missionElementClass);
         missionContainer.appendChild(missionElementPlayerStart);
+        missionContainer.appendChild(missionElementPlayerStartGraph);
         missionContainer.appendChild(missionShowBlipsMechSetupButton);
         missionContainer.appendChild(missionElementBlips);
         missionContainer.appendChild(missionElementBlipsMechSetup);
@@ -462,7 +471,7 @@ function howManyMechsCanSpawnFromBlip(totalMechCount)
     {
         return 0;
     }
-    
+
     diceRoll = rollDice(6);
 
     if(diceRoll == 1)
@@ -543,4 +552,33 @@ function checkIfPoolIsAlreadyAtMax(pools, poolType)
         return true
     }
     return false;
+}
+
+function createPosGraphTable(position)
+{
+    const graphTable = document.createElement("table");
+    graphTable.classList.add("positionGraphTable");
+
+    mapPositionArray.forEach((rowItems) => {
+        let newRow = graphTable.insertRow();
+        rowItems.forEach((cellItems) => {
+
+            let newCell = newRow.insertCell();
+            let textToAdd = "";
+
+            if(cellItems == position)
+            {
+                textToAdd = "X";
+            }
+            else
+            {
+                textToAdd = "O";
+            }
+
+            let newText = document.createTextNode(textToAdd);
+            newCell.appendChild(newText);
+        });
+    });
+
+      return graphTable;
 }
