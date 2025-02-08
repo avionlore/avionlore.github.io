@@ -272,6 +272,16 @@ let missionObject = {
     diceThrowPosAbsolute: 0,
 }
 
+let config = {
+    numberOfAbsolutePositionsOnMaps: 9,
+    numberOfQuadrants: 4,
+    numberOfPositionsInQuadrant: 6,
+    numberOfPositionsForMechPlacement: 6,
+    maxNumberOfMissionsToLoad: 5,
+    maxBlipsInOneMission: 5,
+    maxMechsInMission: 10
+}
+
 
 // Reference to the dropdown element
 const dropdown = document.getElementById('mechClassesDropdown');
@@ -298,7 +308,7 @@ function setMissionObject(key, value)
 
 // Function to generate a random mission name
 function generateMissions(allowedMechClasses) {
-    setMissionObject("numMissions", rollDice(5));
+    setMissionObject("numMissions", rollDice(config.maxNumberOfMissionsToLoad));
     const missionsContainer = document.getElementById("missionsContainer");
     missionsContainer.innerHTML = ""; // Clear previous missions
     
@@ -329,7 +339,7 @@ function generateMissions(allowedMechClasses) {
 
         const missionElementBlips = document.createElement("p");
         missionElementBlips.classList.add("hideme");
-        setMissionObject("blipsFromPools",rollPools(rollDice(6), missionObject.missionClass));
+        setMissionObject("blipsFromPools",rollPools(rollDice(config.maxBlipsInOneMission), missionObject.missionClass));
         missionObject.blipsFromPools.forEach(pool => {
             const subElement = document.createElement("p");
             subElement.textContent = `${pool.displayPosition}`;
@@ -373,9 +383,9 @@ function generateMissions(allowedMechClasses) {
             }
         });
 
-        setMissionObject("diceThrowPlayerWhichQuadrant",rollDice(6));
-        setMissionObject("diceThrowPlayerWhichPosInQuadrant",rollDice(6));
-        setMissionObject("diceThrowPosAbsolute",rollDice(9));
+        setMissionObject("diceThrowPlayerWhichQuadrant",rollDice(config.numberOfQuadrants));
+        setMissionObject("diceThrowPlayerWhichPosInQuadrant",rollDice(config.numberOfPositionsInQuadrant));
+        setMissionObject("diceThrowPosAbsolute",rollDice(config.numberOfAbsolutePositionsOnMaps));
 
         
         const missionElementPlayerStart = document.createElement("p");
@@ -446,9 +456,15 @@ function rollDice(sides) {
     return Math.floor(Math.random() * sides) + 1;
 }
 
-function howManyMechsCanSpawnFromBlip()
+function howManyMechsCanSpawnFromBlip(totalMechCount)
 {
+    if(totalMechCount >= config.maxMechsInMission)
+    {
+        return 0;
+    }
+    
     diceRoll = rollDice(6);
+
     if(diceRoll == 1)
     {
         return 0;
@@ -468,7 +484,9 @@ function howManyMechsCanSpawnFromBlip()
 }
 
 function rollPools(amount, poolClass) {
-    let pools = []
+    let pools = [];
+
+    let totalMechCount = 0;
 
     for (let i = 1; i <= amount; i++) {
         const pool = {
@@ -478,7 +496,7 @@ function rollPools(amount, poolClass) {
             poolQuadrant: 0,
             poolAbsolutePos: 0,
             poolClass: poolClass.className,
-            mechCount: howManyMechsCanSpawnFromBlip(),
+            mechCount: howManyMechsCanSpawnFromBlip(totalMechCount),
             mechs: "No Mechs spotted",
             poolDifficulty: 0
         };
@@ -492,9 +510,9 @@ function rollPools(amount, poolClass) {
         }
         let poolsWithMechs = pool.poolType.containsPools;
 
-        pool.poolPos = rollDice(6);
-        pool.poolQuadrant = rollDice(4);
-        pool.poolAbsolutePos = rollDice(9);
+        pool.poolPos = rollDice(config.numberOfPositionsInQuadrant);
+        pool.poolQuadrant = rollDice(config.numberOfQuadrants);
+        pool.poolAbsolutePos = rollDice(config.numberOfAbsolutePositionsOnMaps);
 
         const mechs = [];
         for(i=0;i<pool.mechCount;i++)
@@ -502,7 +520,7 @@ function rollPools(amount, poolClass) {
             let diceMechPool = rollDice(3);
             let diceMechFromPool = rollDice(6) - 1;
             mechPool = poolsWithMechs[diceMechPool];
-            mechPos = rollDice(6);
+            mechPos = rollDice(config.numberOfPositionsForMechPlacement);
             mechs.push(`${mechPool[diceMechFromPool]} (Pos: ${mechPos})`)
         }
 
